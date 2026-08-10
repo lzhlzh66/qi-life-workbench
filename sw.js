@@ -1,4 +1,4 @@
-/* 栖 · 生活工作台 PWA Service Worker */
+/* 一二布布工作台 PWA Service Worker */
 const VERSION = 'life-pwa-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
