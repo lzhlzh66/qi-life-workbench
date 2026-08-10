@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>栖 · 生活工作台</title>
+<title>一二布布工作台</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="栖">
+<meta name="apple-mobile-web-app-title" content="一二布布">
 <link rel="apple-touch-icon" href="./icon.svg">
 <style>
 /* ============ 设计变量 ============ */
@@ -239,8 +239,8 @@ tr:last-child td{border-bottom:none;}
   <!-- 侧边栏 -->
   <aside class="side">
     <div class="brand">
-      <div class="mark">栖</div>
-      <div><div class="name">栖</div><div class="sub">L I F E&nbsp;&nbsp;D E S K</div></div>
+      <div class="mark">布</div>
+      <div><div class="name">一二布布</div><div class="sub">L I F E&nbsp;&nbsp;D E S K</div></div>
     </div>
     <nav class="nav" id="nav">
       <button data-sec="dash" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 4"/></svg>今日</button>
@@ -775,7 +775,7 @@ function renderDash(c){
 
   html+=`<div class="panel"><h2>云同步</h2><p class="desc">登录后手机/电脑共用一份数据，近实时互通</p><div id="syncBox"></div></div>`;
 
-  html+=`<div class="foot-note">栖 · 你的私人生活手账 — 本地优先，离线可用</div>`;
+  html+=`<div class="foot-note">一二布布 · 你的私人生活手账 — 本地优先，离线可用</div>`;
   c.innerHTML=html;
   renderSyncBox();
   if(localStorage.getItem(KEY_ADD)&&parseInt(localStorage.getItem(KEY_ADD),10)%20===0)showBackupBanner(true);
@@ -1241,14 +1241,14 @@ function installGuide(){
   let steps;
   if(isAndroid){
     steps=`<p><b>用 Chrome 浏览器</b>打开本页面（微信/QQ 内置浏览器装不了，请点右上角「…」选「在浏览器打开」）。</p>
-      <p>① 点 Chrome 右上角 <b>「⋮ 三个点菜单」</b><br>② 在菜单里点 <b>「安装应用」</b> 或 <b>「添加到主屏幕」</b><br>③ 点「安装」，桌面即出现「栖」图标</p>
+      <p>① 点 Chrome 右上角 <b>「⋮ 三个点菜单」</b><br>② 在菜单里点 <b>「安装应用」</b> 或 <b>「添加到主屏幕」</b><br>③ 点「安装」，桌面即出现「一二布布」图标</p>
       <p class="muted">提示：若菜单里没有安装项，先把本页「收藏/加书签」，再在书签里长按选择「添加到主屏幕」。</p>`;
   }else if(isIOS){
-    steps=`<p>① 用 <b>Safari</b> 打开本页面<br>② 点底部 <b>「分享」图标</b> → 选 <b>「添加到主屏幕」</b><br>③ 点「添加」，桌面即出现「栖」图标</p>`;
+    steps=`<p>① 用 <b>Safari</b> 打开本页面<br>② 点底部 <b>「分享」图标</b> → 选 <b>「添加到主屏幕」</b><br>③ 点「添加」，桌面即出现「一二布布」图标</p>`;
   }else{
-    steps=`<p>① 用 <b>Chrome 或 Edge</b> 打开本页面<br>② 地址栏右侧会出现 <b>「安装」图标（向下箭头）</b>，点它即可；或在浏览器右上角 <b>「⋯ 菜单 → 应用 / 安装『栖』」</b></p>`;
+    steps=`<p>① 用 <b>Chrome 或 Edge</b> 打开本页面<br>② 地址栏右侧会出现 <b>「安装」图标（向下箭头）</b>，点它即可；或在浏览器右上角 <b>「⋯ 菜单 → 应用 / 安装『一二布布』」</b></p>`;
   }
-  modal(`<h3>安装「栖」到本机</h3>${steps}<div class="acts"><button class="btn primary" onclick="closeModal()">知道了</button></div>`);
+  modal(`<h3>安装「一二布布」到本机</h3>${steps}<div class="acts"><button class="btn primary" onclick="closeModal()">知道了</button></div>`);
 }
 
 // PWA：注册 Service Worker（仅 https/localhost 生效）
