@@ -1,0 +1,14 @@
+# Render.com 一键部署蓝图：连仓库即自动建服务，无需手动配置。
+services:
+  - type: web
+    name: qi-life-workbench
+    runtime: node
+    plan: free
+    buildCommand: "echo skip-build"
+    startCommand: "node server.js"
+    healthCheckPath: "/"
+    envVars:
+      - key: PORT
+        sync: false
+      - key: DATA_DIR
+        value: /data
