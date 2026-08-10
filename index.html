@@ -256,7 +256,7 @@ tr:last-child td{border-bottom:none;}
       </div>
       <div class="top-actions">
         <span id="acctChip"></span>
-        <button class="btn sm primary" id="topInstall" style="display:none" onclick="installApp()">＋安装App</button>
+        <button class="btn sm primary" id="topInstall" onclick="installApp()">＋安装App</button>
         <button class="btn sm" id="topBackup">↧ 备份</button>
         <button class="btn sm" id="topImport">↥ 导入</button>
         <button class="btn icon" id="topTheme" title="切换主题"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
@@ -1141,6 +1141,8 @@ Object.assign(window,{exportJSON,importJSON,clearDemo,resetAll,switchSec,renderL
 // PWA：捕获安装提示，提供页面内「安装到本机」按钮（电脑/安卓通用）
 let deferredPrompt=null;
 const installBtn=document.getElementById('topInstall');
+// 若已以 App 形态打开（桌面图标进入），则隐藏安装按钮
+if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches){ if(installBtn)installBtn.style.display='none'; }
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault(); deferredPrompt=e;
   if(installBtn)installBtn.style.display='';
@@ -1155,10 +1157,24 @@ window.installApp=async function(){
     try{const {outcome}=await deferredPrompt.userChoice; if(outcome!=='accepted')toast('已取消安装');}catch(e){}
     deferredPrompt=null; return;
   }
-  const isIOS=/iP(ad|hone|od)/.test(navigator.userAgent) && !window.MSStream;
-  if(isIOS) toast('点击 Safari 底部「分享」→「添加到主屏幕」即可安装',4200);
-  else toast('请用 Chrome / Edge 打开此页，再点「＋安装App」',4200);
+  installGuide();
 };
+function installGuide(){
+  const ua=navigator.userAgent;
+  const isIOS=/iP(ad|hone|od)/.test(ua) && !window.MSStream;
+  const isAndroid=/Android/i.test(ua);
+  let steps;
+  if(isAndroid){
+    steps=`<p><b>用 Chrome 浏览器</b>打开本页面（微信/QQ 内置浏览器装不了，请点右上角「…」选「在浏览器打开」）。</p>
+      <p>① 点 Chrome 右上角 <b>「⋮ 三个点菜单」</b><br>② 在菜单里点 <b>「安装应用」</b> 或 <b>「添加到主屏幕」</b><br>③ 点「安装」，桌面即出现「栖」图标</p>
+      <p class="muted">提示：若菜单里没有安装项，先把本页「收藏/加书签」，再在书签里长按选择「添加到主屏幕」。</p>`;
+  }else if(isIOS){
+    steps=`<p>① 用 <b>Safari</b> 打开本页面<br>② 点底部 <b>「分享」图标</b> → 选 <b>「添加到主屏幕」</b><br>③ 点「添加」，桌面即出现「栖」图标</p>`;
+  }else{
+    steps=`<p>① 用 <b>Chrome 或 Edge</b> 打开本页面<br>② 地址栏右侧会出现 <b>「安装」图标（向下箭头）</b>，点它即可；或在浏览器右上角 <b>「⋯ 菜单 → 应用 / 安装『栖』」</b></p>`;
+  }
+  modal(`<h3>安装「栖」到本机</h3>${steps}<div class="acts"><button class="btn primary" onclick="closeModal()">知道了</button></div>`);
+}
 
 // PWA：注册 Service Worker（仅 https/localhost 生效）
 (function(){
