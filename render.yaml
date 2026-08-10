@@ -12,3 +12,9 @@ services:
         sync: false
       - key: DATA_DIR
         value: /data
+      # 以下两项为「加密云端备份」开关，留空＝不备份（本地/NAS 模式）；
+      # 填了则在 GitHub Gist 存一份 AES 加密备份，防免费云主机磁盘丢失。
+      - key: GIST_BACKUP_TOKEN
+        sync: false
+      - key: GIST_BACKUP_PASS
+        sync: false
