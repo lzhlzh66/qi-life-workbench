@@ -256,6 +256,7 @@ tr:last-child td{border-bottom:none;}
       </div>
       <div class="top-actions">
         <span id="acctChip"></span>
+        <button class="btn sm primary" id="topInstall" style="display:none" onclick="installApp()">＋安装App</button>
         <button class="btn sm" id="topBackup">↧ 备份</button>
         <button class="btn sm" id="topImport">↥ 导入</button>
         <button class="btn icon" id="topTheme" title="切换主题"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
@@ -1136,6 +1137,28 @@ Object.assign(window,{exportJSON,importJSON,clearDemo,resetAll,switchSec,renderL
   addMedia,delMedia,editMedia,switchMediaView,closeModal,
   syncSetApi,syncRegister,syncLogin,syncLogout,syncPull,
   syncSetProvider,gistConnect,gistDisconnect});
+
+// PWA：捕获安装提示，提供页面内「安装到本机」按钮（电脑/安卓通用）
+let deferredPrompt=null;
+const installBtn=document.getElementById('topInstall');
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredPrompt=e;
+  if(installBtn)installBtn.style.display='';
+});
+window.addEventListener('appinstalled',()=>{
+  if(installBtn)installBtn.style.display='none';
+  toast('已安装为应用，可离线使用',2600);
+});
+window.installApp=async function(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    try{const {outcome}=await deferredPrompt.userChoice; if(outcome!=='accepted')toast('已取消安装');}catch(e){}
+    deferredPrompt=null; return;
+  }
+  const isIOS=/iP(ad|hone|od)/.test(navigator.userAgent) && !window.MSStream;
+  if(isIOS) toast('点击 Safari 底部「分享」→「添加到主屏幕」即可安装',4200);
+  else toast('请用 Chrome / Edge 打开此页，再点「＋安装App」',4200);
+};
 
 // PWA：注册 Service Worker（仅 https/localhost 生效）
 (function(){
