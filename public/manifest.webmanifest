@@ -4,6 +4,7 @@
   "description": "集成记账、习惯、健身、日程、收藏的私人生活工作台",
   "start_url": "./index.html",
   "scope": "./",
+  "id": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f4f1ea",
