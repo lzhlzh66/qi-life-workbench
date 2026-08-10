@@ -34,7 +34,94 @@ function load() {
 }
 function persist() {
   writeQ = writeQ.then(() => fs.promises.writeFile(STORE, JSON.stringify(store)).catch(e => console.error('写入失败', e)));
+  scheduleBackup();
   return writeQ;
+}
+
+// ---------- 加密云端备份（可选） ----------
+// 配置 GIST_BACKUP_TOKEN(有 gist 权限的 GitHub 令牌) + GIST_BACKUP_PASS(加密口令) 后，
+// 把 {users,groups} 用 AES-256-GCM(PBKDF2 派生密钥) 加密后存到 GitHub Gist。
+// 这样即使免费云主机磁盘是临时的（重启/重新部署会清空），数据也能从加密备份恢复。
+// 明文只在服务器内存里，GitHub 上只见密文；没有口令谁也解不开。
+const GIST_TOKEN = process.env.GIST_BACKUP_TOKEN || '';
+const GIST_PASS  = process.env.GIST_BACKUP_PASS || '';
+const GIST_FILE  = 'qi-life-backup.json';
+const GIST_DESC  = 'qi-life-workbench backup (encrypted)';
+let gistId = '';
+let backupTimer = null;
+
+function bkDeriveKey(pass, salt) { return crypto.pbkdf2Sync(pass, salt, 100000, 32, 'sha256'); }
+function bkEncrypt(obj, pass) {
+  const salt = crypto.randomBytes(16);
+  const key = bkDeriveKey(pass, salt);
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  const data = Buffer.from(JSON.stringify(obj), 'utf8');
+  const enc = Buffer.concat([cipher.update(data), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return 'ENC:' + Buffer.concat([salt, iv, tag, enc]).toString('base64');
+}
+function bkDecrypt(payload, pass) {
+  if (!payload || !payload.startsWith('ENC:')) return null;
+  try {
+    const buf = Buffer.from(payload.slice(4), 'base64');
+    const salt = buf.slice(0, 16), iv = buf.slice(16, 28), tag = buf.slice(28, 44), enc = buf.slice(44);
+    const key = bkDeriveKey(pass, salt);
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+    decipher.setAuthTag(tag);
+    const data = Buffer.concat([decipher.update(enc), decipher.final()]);
+    return JSON.parse(data.toString('utf8'));
+  } catch (e) { console.error('备份解密失败', e.message); return null; }
+}
+const ghHeaders = () => ({
+  'Authorization': 'Bearer ' + GIST_TOKEN, 'Accept': 'application/vnd.github+json',
+  'Content-Type': 'application/json', 'User-Agent': 'qi-life-backup'
+});
+async function findBackupGist() {
+  try {
+    const r = await fetch('https://api.github.com/gists?per_page=100', { headers: ghHeaders() });
+    if (!r.ok) return '';
+    const list = await r.json();
+    for (const g of list) if (g.files && g.files[GIST_FILE]) return g.id;
+  } catch (e) { console.error('查找备份 Gist 失败', e.message); }
+  return '';
+}
+async function gistRestore() {
+  if (!GIST_TOKEN || !GIST_PASS || !gistId) return;
+  try {
+    const r = await fetch('https://api.github.com/gists/' + gistId, { headers: ghHeaders() });
+    if (!r.ok) return;
+    const j = await r.json();
+    const f = j.files && j.files[GIST_FILE];
+    if (f && f.content) {
+      const obj = bkDecrypt(f.content, GIST_PASS);
+      if (obj) { store.users = obj.users || {}; store.groups = obj.groups || {}; store.sessions = {}; console.log('已从加密备份恢复数据'); }
+    }
+  } catch (e) { console.error('恢复备份失败', e.message); }
+}
+async function gistPush() {
+  if (!GIST_TOKEN || !GIST_PASS) return;
+  try {
+    const payload = bkEncrypt({ users: store.users, groups: store.groups }, GIST_PASS);
+    if (!gistId) gistId = await findBackupGist();
+    if (!gistId) {
+      const r = await fetch('https://api.github.com/gists', {
+        method: 'POST', headers: ghHeaders(),
+        body: JSON.stringify({ public: false, description: GIST_DESC, files: { [GIST_FILE]: { content: payload } } })
+      });
+      if (r.ok) { const j = await r.json(); gistId = j.id; console.log('已创建加密备份 Gist'); }
+    } else {
+      const r = await fetch('https://api.github.com/gists/' + gistId, {
+        method: 'PATCH', headers: ghHeaders(),
+        body: JSON.stringify({ files: { [GIST_FILE]: { content: payload } } })
+      });
+      if (r.ok) console.log('已推送加密备份');
+    }
+  } catch (e) { console.error('推送备份失败', e.message); }
+}
+function scheduleBackup() {
+  if (!GIST_TOKEN || !GIST_PASS || backupTimer) return;
+  backupTimer = setTimeout(() => { backupTimer = null; gistPush(); }, 30000); // 改动后 30 秒兜底推送
 }
 
 // ---------- 密码与令牌 ----------
@@ -204,4 +291,15 @@ server.listen(PORT, () => {
   console.log('栖 · 多用户一体化服务已启动');
   console.log('  前端 + 多用户API: http://localhost:' + PORT);
   console.log('  数据目录: ' + DATA_DIR);
+  if (GIST_TOKEN && GIST_PASS) {
+    (async () => {
+      gistId = await findBackupGist();
+      await gistRestore();
+      await gistPush();                       // 立刻备一次，确保 Gist 存在
+      setInterval(gistPush, 5 * 60 * 1000);   // 之后每 5 分钟再备
+      console.log('加密云端备份已启用（GitHub Gist）');
+    })();
+  } else {
+    console.log('未配置 GIST_BACKUP_TOKEN/GIST_BACKUP_PASS，跳过云端备份（本地/NAS 模式无需）');
+  }
 });
