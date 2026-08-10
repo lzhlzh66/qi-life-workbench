@@ -1,6 +1,6 @@
 {
-  "name": "栖 · 生活工作台",
-  "short_name": "栖",
+  "name": "一二布布工作台",
+  "short_name": "一二布布",
   "description": "集成记账、习惯、健身、日程、收藏的私人生活工作台",
   "start_url": "./index.html",
   "scope": "./",
