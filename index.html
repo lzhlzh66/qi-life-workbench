@@ -220,6 +220,18 @@ tr:last-child td{border-bottom:none;}
   .heat{font-size:0;}
 }
 @media(min-width:861px){.mobile-nav{display:none;}}
+/* 团队空间（多人共用） */
+.rows{display:flex;flex-direction:column;gap:8px;}
+.row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);}
+.row .ck{display:flex;align-items:center;gap:8px;flex:1;cursor:pointer;min-width:0;}
+.row .ck span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.row.done .ck span{text-decoration:line-through;color:var(--muted);}
+.exp{color:var(--neg);font-weight:600;} .inc{color:var(--pos);font-weight:600;}
+.stat b{display:block;font-size:19px;} .stat span{font-size:11.5px;color:var(--muted);}
+.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin-top:6px;}
+.photo{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface-2);}
+.photo img{width:100%;height:96px;object-fit:cover;display:block;}
+.photo-cap{padding:5px 7px;font-size:11px;color:var(--ink-soft);}
 </style>
 </head>
 <body>
@@ -238,6 +250,7 @@ tr:last-child td{border-bottom:none;}
       <button data-sec="schedule"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>日程统筹</button>
       <button data-sec="shopping"><svg viewBox="0 0 24 24"><path d="M3 4h2l2 13h12l2-9H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>待买清单</button>
       <button data-sec="media"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>书影音</button>
+      <button data-sec="team"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>我们的空间</button>
     </nav>
     <div class="side-foot">
       <button id="btnBackup">↧ 导出备份</button>
@@ -275,6 +288,7 @@ tr:last-child td{border-bottom:none;}
   <button data-sec="schedule"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>日程</button>
   <button data-sec="shopping"><svg viewBox="0 0 24 24"><path d="M3 4h2l2 13h12l2-9H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>待买</button>
   <button data-sec="media"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>收藏</button>
+  <button data-sec="team"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>空间</button>
 </nav>
 
 <input type="file" id="fileInput" accept=".json,application/json" class="hidden">
@@ -493,10 +507,10 @@ function gistDisconnect(){SYNC.gistToken='';SYNC.gistId='';localStorage.removeIt
 /* ---- 自建服务器模式（复用之前实现）---- */
 function syncBase(){return SYNC.serverApi||location.origin;}
 async function api(path,opts={}){opts.headers=Object.assign({'Content-Type':'application/json'},opts.headers||{});if(SYNC.token)opts.headers.Authorization='Bearer '+SYNC.token;return fetch(syncBase()+path,opts);}
-async function syncRegister(u,p){if(!u||!p){toast('请输入用户名和密码','err');return;}try{const r=await api('/api/register',{method:'POST',body:JSON.stringify({username:u,password:p})});if(!r.ok){const e=await r.json().catch(()=>({}));toast('注册失败：'+(e.error||r.status),'err');return;}const j=await r.json();SYNC.token=j.token;SYNC.user=u;localStorage.setItem('wb_life_token',j.token);localStorage.setItem('wb_life_user',u);await afterLogin();toast('注册并登录成功');}catch(e){toast('网络错误：'+(e.message||''),'err');}}
+async function syncRegister(u,p,code){if(!u||!p){toast('请输入用户名和密码','err');return;}try{const r=await api('/api/register',{method:'POST',body:JSON.stringify({username:u,password:p,inviteCode:code||undefined})});if(!r.ok){const e=await r.json().catch(()=>({}));toast('注册失败：'+(e.error||r.status),'err');return;}const j=await r.json();SYNC.token=j.token;SYNC.user=u;localStorage.setItem('wb_life_token',j.token);localStorage.setItem('wb_life_user',u);await afterLogin();toast('注册并登录成功');}catch(e){toast('网络错误：'+(e.message||''),'err');}}
 async function syncLogin(u,p){if(!u||!p){toast('请输入用户名和密码','err');return;}try{const r=await api('/api/login',{method:'POST',body:JSON.stringify({username:u,password:p})});if(!r.ok){const e=await r.json().catch(()=>({}));toast('登录失败：'+(e.error||r.status),'err');return;}const j=await r.json();SYNC.token=j.token;SYNC.user=u;localStorage.setItem('wb_life_token',j.token);localStorage.setItem('wb_life_user',u);await afterLogin();toast('登录成功');}catch(e){toast('网络错误：'+(e.message||''),'err');}}
-async function afterLogin(){SYNC.status='同步中';renderAcct();renderSyncBox();await serverPull();syncStart();}
-function syncLogout(){if(SYNC.token){api('/api/logout',{method:'POST'}).catch(()=>{});}SYNC.token='';SYNC.user='';localStorage.removeItem('wb_life_token');localStorage.removeItem('wb_life_user');syncStop();renderAcct();renderSyncBox();toast('已退出云同步');}
+async function afterLogin(){SYNC.status='同步中';renderAcct();renderSyncBox();await serverPull();await teamLoad();syncStart();syncShareStart();}
+function syncLogout(){if(SYNC.token){api('/api/logout',{method:'POST'}).catch(()=>{});}SYNC.token='';SYNC.user='';SYNC.inviteCode='';SYNC.members=[];localStorage.removeItem('wb_life_token');localStorage.removeItem('wb_life_user');syncStop();syncShareStop();renderAcct();renderSyncBox();if(curSec==='team')renderSec();toast('已退出团队');}
 async function serverPull(){if(!SYNC.token)return;try{SYNC.status='同步中';renderAcct();const r=await api('/api/data');if(!r.ok)return;const j=await r.json();if(j.updatedAt!==SYNC.updatedAt){SYNC.suppress=true;DB=j.data;save(true);SYNC.suppress=false;SYNC.updatedAt=j.updatedAt;renderAll();}SYNC.status='已同步';renderAcct();}catch(e){SYNC.status='离线';renderAcct();}}
 async function pushNow(){if(SYNC.suppress)return;if(SYNC.provider==='gist')return gistPush();if(!SYNC.token)return;try{const r=await api('/api/data',{method:'PUT',body:JSON.stringify({data:DB,baseUpdatedAt:SYNC.updatedAt})});if(r.ok){const j=await r.json();SYNC.updatedAt=j.updatedAt;SYNC.status='已同步';renderAcct();}else if(r.status===409){const j=await r.json().catch(()=>({}));conflictModal(j.serverData,j.serverUpdatedAt,'server');}}catch(e){SYNC.status='离线';renderAcct();}}
 async function syncPull(){if(SYNC.provider==='gist')return gistPull();return serverPull();}
@@ -513,6 +527,64 @@ function conflictModal(serverData,serverRev,kind){
 function syncStart(){syncStop();SYNC.timer=setInterval(syncPull,12000);}
 function syncStop(){if(SYNC.timer){clearInterval(SYNC.timer);SYNC.timer=null;}}
 function renderAcct(){const el=$('#acctChip');if(!el)return;const on=SYNC.provider==='gist'?!!SYNC.gistId:!!SYNC.token;el.innerHTML=on?`<span class="tag sage" title="已开启云同步">☁ ${SYNC.provider==='gist'?'GitHub':esc(SYNC.user)}</span>`:`<span class="tag">未同步</span>`;}
+
+/* ===================== 团队空间（多人共用） ===================== */
+const SHARE_KEY='wb_life_share';
+let SHARE=loadShare();
+let TEAM_TAB='todo';
+function loadShare(){try{return JSON.parse(localStorage.getItem(SHARE_KEY))||{todos:[],ledger:[],album:[]};}catch(e){return{todos:[],ledger:[],album:[]};}}
+function saveShareLocal(){try{localStorage.setItem(SHARE_KEY,JSON.stringify(SHARE));}catch(e){}}
+function saveShareNow(){saveShareLocal();if(SYNC.token)scheduleSharePush();}
+let SHARE_PUSH_T=null;
+function scheduleSharePush(){clearTimeout(SHARE_PUSH_T);SHARE_PUSH_T=setTimeout(pushShareNow,1200);}
+async function pushShareNow(){if(!SYNC.token)return;try{const r=await api('/api/share',{method:'PUT',body:JSON.stringify({data:SHARE,baseUpdatedAt:SYNC.shareRev||0})});if(r.ok){const j=await r.json();SYNC.shareRev=j.updatedAt;}else if(r.status===409){const j=await r.json().catch(()=>({}));SYNC.shareRev=j.serverUpdatedAt;SHARE=j.serverData||SHARE;saveShareLocal();toast('公共空间与云端冲突，已采用云端版本');renderSec();}}catch(e){}}
+async function pullShare(){if(!SYNC.token)return;try{const r=await api('/api/share');if(!r.ok)return;const j=await r.json();SYNC.shareRev=j.updatedAt;SHARE=j.data||{todos:[],ledger:[],album:[]};saveShareLocal();if(curSec==='team')renderSec();}catch(e){}}
+function syncShareStart(){syncShareStop();SYNC.shareTimer=setInterval(pullShare,12000);}
+function syncShareStop(){if(SYNC.shareTimer){clearInterval(SYNC.shareTimer);SYNC.shareTimer=null;}}
+async function teamLoad(){if(!SYNC.token)return;try{const r=await api('/api/me');if(!r.ok)return;const j=await r.json();SYNC.inviteCode=j.inviteCode;SYNC.members=j.members;SYNC.isCreator=j.isCreator;await pullShare();renderAcct();if(curSec==='team')renderSec();}catch(e){}}
+function copyInvite(){if(!SYNC.inviteCode)return;if(navigator.clipboard)navigator.clipboard.writeText(SYNC.inviteCode);toast('邀请码：'+SYNC.inviteCode+'（已尝试复制）');}
+function teamSwitch(k){TEAM_TAB=k;renderSec();}
+function renderTeam(c){
+  if(!SYNC.token){
+    c.innerHTML=`<div class="panel"><h2>我们的空间</h2><p class="desc">这是你和好友/家人共享的空间：共享待办、共享记账、共享相册；每个人还有独立私人空间。</p><p>要使用公共空间，请先到「云同步」选择 <b>自建服务器</b> 模式，注册或登录团队账号（注册时填好友的邀请码即可加入同一圈子）。</p><button class="btn primary" onclick="switchSec('dash')">前往云同步</button></div>`;
+    return;
+  }
+  const mem=(SYNC.members||[]).map(m=>`<span class="tag ${m.isCreator?'sage':''}">${esc(m.username)}${m.isCreator?' · 创建者':''}</span>`).join('');
+  const tab=(k,l)=>`<button class="${TEAM_TAB===k?'on':''}" onclick="teamSwitch('${k}')">${l}</button>`;
+  const body= TEAM_TAB==='todo'?teamTodo(): TEAM_TAB==='ledger'?teamLedger(): teamAlbum();
+  c.innerHTML=`<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>我们的空间</h2><button class="btn sm ghost" onclick="syncLogout()">退出团队</button></div>
+    <p class="desc">圈子邀请码 <b>${SYNC.inviteCode||'—'}</b> <button class="btn sm" onclick="copyInvite()">复制邀请好友</button></p>
+    <div style="margin:4px 0 12px;display:flex;gap:6px;flex-wrap:wrap">${mem||'<span class="tag">暂无其他成员</span>'}</div>
+    <div class="seg" style="margin-bottom:14px">${tab('todo','共享待办')}${tab('ledger','共享记账')}${tab('album','共享相册')}</div>${body}</div>`;
+}
+function teamTodo(){
+  const list=((SHARE.todos)||[]).map(t=>`<div class="row"><label class="ck"><input type="checkbox" ${t.done?'checked':''} onchange="toggleShareTodo('${t.id}')"><span>${esc(t.text)}</span></label><span class="muted" style="font-size:11px">${esc(t.by||'')}</span><button class="btn sm ghost" onclick="delShareTodo('${t.id}')">删</button></div>`).join('')||'<p class="muted">还没有共享待办</p>';
+  return `<div class="inline-form" style="margin-bottom:8px"><input type="text" id="st_text" placeholder="添加共享待办…" onkeydown="if(event.key==='Enter')addShareTodo()"><button class="btn primary" onclick="addShareTodo()">添加</button></div><div class="rows">${list}</div>`;
+}
+function addShareTodo(){const v=$('#st_text').value.trim();if(!v)return;SHARE.todos=SHARE.todos||[];SHARE.todos.push({id:uid(),text:v,done:false,by:SYNC.user,at:Date.now()});$('#st_text').value='';saveShareNow();renderSec();}
+function toggleShareTodo(id){const t=(SHARE.todos||[]).find(x=>x.id===id);if(t){t.done=!t.done;saveShareNow();renderSec();}}
+function delShareTodo(id){SHARE.todos=(SHARE.todos||[]).filter(x=>x.id!==id);saveShareNow();renderSec();}
+function teamLedger(){
+  const L=SHARE.ledger||[];const mk=TODAY().slice(0,7);
+  const out=L.filter(x=>x.date&&x.date.slice(0,7)===mk&&x.io==='out').reduce((s,x)=>s+x.amount,0);
+  const inc=L.filter(x=>x.date&&x.date.slice(0,7)===mk&&x.io==='in').reduce((s,x)=>s+x.amount,0);
+  const rows=L.slice().reverse().map(x=>`<div class="row"><span class="${x.io==='out'?'exp':'inc'}">${x.io==='out'?'-':'+'}${money(x.amount)}</span><span style="min-width:52px">${esc(x.cat)}</span><span class="muted" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.note||'')}</span><span class="muted" style="font-size:11px">${x.date} ${esc(x.by||'')}</span><button class="btn sm ghost" onclick="delShareLedger('${x.id}')">删</button></div>`).join('')||'<p class="muted">还没有共享记账</p>';
+  const cats=EXP_CATS.concat(INC_CATS).map(c=>`<option>${c}</option>`).join('');
+  return `<div style="display:flex;gap:14px;margin-bottom:10px"><div class="stat"><b style="color:#bd5638">${money(out)}</b><span>本月支出</span></div><div class="stat"><b style="color:#5f7a6e">${money(inc)}</b><span>本月收入</span></div></div>
+    <div class="inline-form" style="margin-bottom:8px"><select id="sl_io"><option value="out">支出</option><option value="in">收入</option></select><input type="number" id="sl_amt" placeholder="金额" style="width:96px"><select id="sl_cat">${cats}</select><input type="text" id="sl_note" placeholder="备注"><input type="date" id="sl_date" value="${TODAY()}"><button class="btn primary" onclick="addShareLedger()">记一笔</button></div>
+    <div class="rows">${rows}</div>`;
+}
+function addShareLedger(){const amt=parseFloat($('#sl_amt').value);if(!amt){toast('请输入金额','err');return;}SHARE.ledger=SHARE.ledger||[];SHARE.ledger.push({id:uid(),amount:amt,io:$('#sl_io').value,cat:$('#sl_cat').value,note:$('#sl_note').value.trim(),date:$('#sl_date').value,by:SYNC.user});saveShareNow();renderSec();}
+function delShareLedger(id){SHARE.ledger=(SHARE.ledger||[]).filter(x=>x.id!==id);saveShareNow();renderSec();}
+function teamAlbum(){
+  const A=SHARE.album||[];
+  const grid=A.map(a=>`<div class="photo"><img src="${a.img}" alt=""><div class="photo-cap">${esc(a.title||'')}</div><button class="btn sm ghost" style="width:100%;border-radius:0;border:none" onclick="delShareAlbum('${a.id}')">删除</button><div class="muted" style="font-size:10px;padding:2px 7px">${esc(a.by||'')}</div></div>`).join('');
+  return `<div class="inline-form" style="margin-bottom:10px"><input type="text" id="sa_title" placeholder="照片说明…"><button class="btn primary" onclick="document.getElementById('sa_file').click()">上传图片</button><input type="file" id="sa_file" accept="image/*" class="hidden" onchange="onShareAlbum(this)"></div>${A.length?'<div class="album-grid">'+grid+'</div>':'<p class="muted">还没有共享照片，上传第一张吧</p>'}`;
+}
+function onShareAlbum(input){const f=input.files&&input.files[0];if(!f)return;if((SHARE.album||[]).length>=9){toast('共享相册最多9张','err');return;}compressImage(f,800,dataUrl=>{SHARE.album=SHARE.album||[];SHARE.album.push({id:uid(),title:$('#sa_title').value.trim(),img:dataUrl,by:SYNC.user,at:Date.now()});$('#sa_title').value='';saveShareNow();renderSec();});}
+function delShareAlbum(id){SHARE.album=(SHARE.album||[]).filter(x=>x.id!==id);saveShareNow();renderSec();}
+function compressImage(file,maxW,cb){const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height;if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);cb(cv.toDataURL('image/jpeg',0.82));};img.src=fr.result;};fr.readAsDataURL(file);}
+
 function renderSyncBox(){
   const el=$('#syncBox');if(!el)return;
   const tab=(p,l)=>`<button class="btn sm ${SYNC.provider===p?'primary':''}" onclick="syncSetProvider('${p}')">${l}</button>`;
@@ -539,9 +611,10 @@ function renderSyncBox(){
       <div class="inline-form">
       <div style="flex:1;min-width:120px"><label>用户名</label><input type="text" id="sync_u" placeholder="用户名"></div>
       <div style="flex:1;min-width:120px"><label>密码</label><input type="password" id="sync_p" placeholder="密码"></div>
+      <div style="flex:1;min-width:140px"><label>邀请码（加入好友圈子·可留空）</label><input type="text" id="sync_code" placeholder="留空＝自建圈子"></div>
       <button class="btn primary" onclick="syncLogin(document.getElementById('sync_u').value,document.getElementById('sync_p').value)">登录</button>
-      <button class="btn" onclick="syncRegister(document.getElementById('sync_u').value,document.getElementById('sync_p').value)">注册</button></div>
-      <p class="muted" style="font-size:12.5px;margin:8px 0 0">高级模式：需自建 Node 后端（见 sync-server/README.md）。</p>`;
+      <button class="btn" onclick="syncRegister(document.getElementById('sync_u').value,document.getElementById('sync_p').value,document.getElementById('sync_code').value)">注册</button></div>
+      <p class="muted" style="font-size:12.5px;margin:8px 0 0">团队模式：注册时填好友的邀请码即加入同一圈子（共享空间）；留空则自建新圈子并生成邀请码。需自建 Node 后端（同源部署即可，见 sync-server/README.md）。</p>`;
     return;
   }
   el.innerHTML=head+`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -598,7 +671,7 @@ function resetAll(){
 
 /* ===================== 渲染调度 ===================== */
 let curSec='dash';
-const SEC_TITLE={dash:'今日',ledger:'记账理财',habits:'习惯健康',fitness:'减脂健身',schedule:'日程统筹',shopping:'待买清单',media:'书影音收藏'};
+const SEC_TITLE={dash:'今日',ledger:'记账理财',habits:'习惯健康',fitness:'减脂健身',schedule:'日程统筹',shopping:'待买清单',media:'书影音收藏',team:'我们的空间'};
 function switchSec(s){
   curSec=s;$('#secTitle').textContent=SEC_TITLE[s];
   $$('#nav button,#mobileNav button').forEach(b=>b.classList.toggle('active',b.dataset.sec===s));
@@ -614,6 +687,7 @@ function renderSec(){
   else if(curSec==='schedule')renderSchedule(c);
   else if(curSec==='shopping')renderShopping(c);
   else if(curSec==='media')renderMedia(c);
+  else if(curSec==='team')renderTeam(c);
 }
 function renderAll(){renderSec();}
 
@@ -1136,7 +1210,8 @@ Object.assign(window,{exportJSON,importJSON,clearDemo,resetAll,switchSec,renderL
   addFitness,delFit,addPlan,delPlan,doneSched,addSched,toggleSched,delSched,addShop,toggleShop,delShop,
   addMedia,delMedia,editMedia,switchMediaView,closeModal,
   syncSetApi,syncRegister,syncLogin,syncLogout,syncPull,
-  syncSetProvider,gistConnect,gistDisconnect});
+  syncSetProvider,gistConnect,gistDisconnect,
+  renderTeam,teamSwitch,addShareTodo,toggleShareTodo,delShareTodo,addShareLedger,delShareLedger,onShareAlbum,delShareAlbum,copyInvite});
 
 // PWA：捕获安装提示，提供页面内「安装到本机」按钮（电脑/安卓通用）
 let deferredPrompt=null;
