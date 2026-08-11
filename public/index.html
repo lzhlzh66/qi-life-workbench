@@ -1391,17 +1391,26 @@ function installGuide(){
 // PWA：注册 Service Worker（仅 https/localhost 生效）
 (function(){
   if(!('serviceWorker' in navigator))return;
-  window.addEventListener('load',()=>{
+  function setup(){
     navigator.serviceWorker.register('./sw.js').then(reg=>{
+      // 若已有等待中的新版本，立即激活，避免用户一直用旧版（含会卡死的旧版）
+      if(reg.waiting){ reg.waiting.postMessage({type:'SKIP_WAITING'}); }
       reg.addEventListener('updatefound',()=>{
         const nw=reg.installing;if(!nw)return;
         nw.addEventListener('statechange',()=>{
           if(nw.state==='installed'&&navigator.serviceWorker.controller){
-            toast('发现新版本，刷新后生效'); // 温和提示，刷新即获得迭代
+            nw.postMessage({type:'SKIP_WAITING'});
           }
         });
       });
     }).catch(()=>{});
+  }
+  if(document.readyState==='complete'){ setup(); }
+  else { window.addEventListener('load', setup); }
+  // 新 SW 接管后立即刷新一次，确保用户拿到最新页面（根治缓存旧版导致的卡死）
+  let refreshing=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!refreshing){ refreshing=true; location.reload(); }
   });
 })();
 
@@ -1528,6 +1537,23 @@ function decoRug(){return '<svg width="96" height="30" viewBox="0 0 96 30"><elli
 function decoLamp(){return '<svg width="34" height="58" viewBox="0 0 34 58"><path d="M9 6h16l5 15H4z" fill="#f0c674"/><rect x="15" y="21" width="4" height="29" fill="#9a6f44"/><rect x="8" y="50" width="18" height="6" rx="2" fill="#9a6f44"/></svg>';}
 
 boot();
+</script>
+<script>
+/* 启动页兜底：任何未知脚本异常或网络缓慢，最多 3.5s 强制隐藏启动页，杜绝永久卡在「正在布置小屋」 */
+(function(){
+  function forceHide(){
+    try{
+      var s=document.getElementById('splash');
+      if(s && !s.dataset.forced){
+        s.dataset.forced='1';
+        s.classList.add('hide');
+        setTimeout(function(){ if(s&&s.parentNode){ s.parentNode.removeChild(s);} },600);
+      }
+    }catch(e){}
+  }
+  window.addEventListener('error', function(){ setTimeout(forceHide,50); });
+  setTimeout(forceHide, 3500);
+})();
 </script>
 </body>
 </html>
