@@ -18,3 +18,10 @@ services:
         sync: false
       - key: GIST_BACKUP_PASS
         sync: false
+      # 以下两项用于 TWA 全屏（去除安卓 App 顶部地址栏）。
+      # 拿到 PWABuilder 生成的签名 SHA256 指纹后填 ASSETLINKS_FP，
+      # 包名 ASSETLINKS_PKG 一般保持默认即可。
+      - key: ASSETLINKS_FP
+        sync: false
+      - key: ASSETLINKS_PKG
+        sync: false
