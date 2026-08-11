@@ -197,6 +197,13 @@ const server = http.createServer(async (req, res) => {
   cors(req, res);
   const url = new URL(req.url, 'http://x');
   const p = url.pathname;
+  if (p === '/.well-known/assetlinks.json') {
+    const fp = process.env.ASSETLINKS_FP || 'REPLACE_WITH_YOUR_SHA256_FINGERPRINT';
+    const pkg = process.env.ASSETLINKS_PKG || 'com.lzhlzh66.qilife';
+    const al = [{ relation: ['delegate_permission/common.handle_all_urls'], target: { namespace: 'android_app', package_name: pkg, sha256_cert_fingerprints: [fp] } }];
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(al, null, 2));
+  }
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
   try {
     if (p.startsWith('/api/')) {
