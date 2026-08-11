@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>一二布布工作台</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
@@ -254,10 +254,12 @@ tr:last-child td{border-bottom:none;}
 .photo img{width:100%;height:96px;object-fit:cover;display:block;}
 .photo-cap{padding:5px 7px;font-size:11px;color:var(--ink-soft);}
 /* ============ 小屋 · 养成空间 ============ */
-.home{background:linear-gradient(160deg,#fff6ec,#fdeede 45%,#f3e7d6);border-radius:var(--radius);padding:18px;min-height:62vh;}
-.home-scene{position:relative;display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;justify-content:center;}
-.pets{position:relative;width:100%;height:130px;display:flex;justify-content:center;gap:26px;align-items:flex-end;margin-bottom:4px;}
-.pet{width:104px;transform-origin:bottom center;}
+.home{position:relative;background:linear-gradient(160deg,#fdf3e6,#f3e2cd);border-radius:var(--radius);padding:18px;min-height:64vh;overflow:hidden;touch-action:manipulation;}
+.home.room:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#fdf6ea 0%,#f6e7d2 60%,#ecd6ba 60%,#dccaa6 100%);z-index:0;}
+.home.room:after{content:"";position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(#ead2b6,#d2b48f);transform:perspective(520px) rotateX(34deg);transform-origin:bottom center;box-shadow:inset 0 3px 0 rgba(255,255,255,.35);z-index:0;}
+.home > *{position:relative;z-index:1;}
+.pets{position:relative;width:100%;height:118px;display:flex;justify-content:center;gap:24px;align-items:flex-end;margin-bottom:2px;}
+.pet{width:98px;transform-origin:bottom center;}
 .pet svg{display:block;width:100%;height:auto;filter:drop-shadow(0 6px 8px rgba(120,80,40,.18));}
 .pet.one{animation:breathe 3.4s ease-in-out infinite;}
 .pet.two{animation:sway 4s ease-in-out infinite;animation-delay:.5s;}
@@ -265,11 +267,12 @@ tr:last-child td{border-bottom:none;}
 @keyframes breathe{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-5px) scale(1.02);}}
 @keyframes sway{0%,100%{transform:rotate(-2.5deg);}50%{transform:rotate(2.5deg);}}
 @keyframes blink{0%,93%,100%{transform:scaleY(1);}96%{transform:scaleY(.1);}}
-.home-greet{text-align:center;font-family:var(--serif);font-size:17px;color:#9a6b4a;margin:0 0 16px;}
-.fridge-wrap{flex:0 0 auto;width:min(340px,92vw);}
-.fridge{position:relative;width:100%;height:440px;border-radius:22px;background:linear-gradient(160deg,#eef3f1,#dfe8e4);box-shadow:0 14px 30px rgba(90,110,100,.22),inset 0 2px 6px rgba(255,255,255,.6);overflow:hidden;border:2px solid #cfdcd6;perspective:1300px;}
+.home-greet{text-align:center;font-family:var(--serif);font-size:17px;color:#9a6b4a;margin:0 0 14px;}
+.home-scene{position:relative;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;justify-content:center;max-width:760px;margin:0 auto;}
+.fridge-wrap{flex:0 0 auto;width:min(330px,92vw);}
+.fridge{position:relative;width:100%;height:430px;border-radius:22px;background:linear-gradient(160deg,#eef3f1,#dfe8e4);box-shadow:0 14px 30px rgba(90,110,100,.22),inset 0 2px 6px rgba(255,255,255,.6);overflow:hidden;border:2px solid #cfdcd6;perspective:1300px;touch-action:manipulation;}
 .fridge-top{position:absolute;top:0;left:0;right:0;height:34px;background:linear-gradient(#d6e2dd,#c8d6d0);display:flex;align-items:center;justify-content:center;font-size:12px;color:#5f7a6e;letter-spacing:1px;z-index:5;border-bottom:1px solid #c0cfc8;}
-.fridge-doors{position:absolute;inset:34px 0 0 0;display:flex;z-index:4;transition:transform .5s;}
+.fridge-doors{position:absolute;inset:34px 0 0 0;display:flex;z-index:4;cursor:pointer;}
 .door{flex:1;background:linear-gradient(155deg,#f4f8f6,#dde8e3);border:1px solid #cdd9d3;position:relative;transition:transform .75s cubic-bezier(.6,.05,.3,1);transform-origin:left center;backface-visibility:hidden;}
 .door.right{transform-origin:right center;border-left:none;}
 .door .handle{position:absolute;top:46%;width:9px;height:56px;background:#b9c7c0;border-radius:5px;}
@@ -278,32 +281,64 @@ tr:last-child td{border-bottom:none;}
 .fridge.open .door.right{transform:rotateY(118deg);}
 .fridge-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:12px;color:#7d8c85;z-index:6;pointer-events:none;transition:opacity .3s;}
 .fridge.open .fridge-hint{opacity:0;}
-.fridge-inside{position:absolute;inset:34px 0 0 0;background:linear-gradient(#fbfdfc,#eef4f1);display:flex;flex-direction:column;padding:10px;}
+.fridge-inside{position:absolute;inset:34px 0 0 0;background:linear-gradient(#fbfdfc,#eef4f1);display:flex;flex-direction:column;padding:10px;overflow-y:auto;}
 .zone{flex:1;display:flex;flex-direction:column;}
 .zone.cold{border-bottom:3px solid #cfe0d8;}
 .zone-title{font-size:11px;color:#7d8c85;padding:2px 2px 6px;display:flex;align-items:center;gap:5px;}
 .zone-title b{color:#5f7a6e;}
-.shelves{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;flex:1;}
-.shelf{border:1px dashed #cdd9d3;border-radius:10px;background:#f6faf8;padding:6px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:5px;align-items:center;}
-.shelf-cat{width:100%;font-size:10px;color:#7d8c85;margin-bottom:3px;}
-.shelf-add{width:100%;border:1px dashed #bcd0c7;border-radius:8px;background:#fbfdfc;color:#7d8c85;font-size:12px;padding:5px;cursor:pointer;font-family:inherit;}
-.shelf-add:active{background:#eef4f1;}
-.item{display:flex;flex-direction:column;align-items:center;width:46px;}
-.item .ico{width:34px;height:34px;}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1;align-content:flex-start;}
+.cat-card{display:flex;align-items:center;gap:7px;background:#f6faf8;border:1px solid #dce8e2;border-radius:11px;padding:8px 10px;cursor:pointer;font-size:13px;color:#5b554c;touch-action:manipulation;}
+.cat-card:active{background:#eef4f1;}
+.cat-card.open{background:#e7f1ec;border-color:#bcd4c8;}
+.cat-ic{width:30px;height:30px;flex:0 0 auto;}
+.cat-ic svg{width:100%;height:100%;display:block;}
+.cat-name{flex:1;}
+.cat-count{font-size:11px;color:#7d8c85;background:#eef4f1;border-radius:20px;padding:1px 8px;}
+.cat-panel{border:1px dashed #cdd9d3;border-radius:10px;background:#fff;padding:8px;margin-top:6px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;}
+.item{position:relative;display:flex;flex-direction:column;align-items:center;width:50px;background:#f6faf8;border:1px solid #e3ede9;border-radius:10px;padding:5px 2px;}
+.item .ico{width:32px;height:32px;}
 .item .nm{font-size:10px;color:#5b554c;max-width:46px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
-.item .qty{display:flex;align-items:center;gap:3px;font-size:11px;color:#9a6b4a;}
-.item .qty button{width:16px;height:16px;border:none;background:#eadfce;border-radius:50%;color:#9a6b4a;cursor:pointer;font-size:12px;line-height:1;padding:0;}
-.item-del{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border:none;background:#f3e2d2;color:#bd5638;border-radius:50%;font-size:12px;line-height:1;cursor:pointer;padding:0;}
+.item .qty{display:flex;align-items:center;gap:4px;font-size:11px;color:#9a6b4a;}
+.item .qty button{width:18px;height:18px;border:none;background:#eadfce;border-radius:50%;color:#9a6b4a;cursor:pointer;font-size:13px;line-height:1;padding:0;}
+.item-del{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border:none;background:#f3e2d2;color:#bd5638;border-radius:50%;font-size:12px;line-height:1;cursor:pointer;padding:0;}
+.shelf-add{width:100%;border:1px dashed #bcd0c7;border-radius:8px;background:#fbfdfc;color:#7d8c85;font-size:12px;padding:6px;cursor:pointer;font-family:inherit;margin-top:6px;}
+.shelf-add:active{background:#eef4f1;}
 .board-wrap{flex:0 0 auto;width:min(300px,92vw);}
 .board{background:#fffef9;border:10px solid #c79a6b;border-radius:8px;box-shadow:0 10px 22px rgba(120,80,40,.18);padding:14px;position:relative;}
 .board:before{content:"";position:absolute;top:-22px;left:50%;transform:translateX(-50%);width:50px;height:14px;background:#b98a5a;border-radius:3px;box-shadow:0 4px 6px rgba(120,80,40,.25);}
 .board h3{margin:0 0 6px;font-family:var(--serif);color:#9a6b4a;font-size:15px;}
 .board label{display:block;font-size:12px;color:#9a6b4a;margin:10px 0 4px;}
 .board textarea{width:100%;border:1px solid #e3d8c4;border-radius:8px;padding:8px;font-family:inherit;font-size:14px;resize:vertical;background:#fffef9;color:#5b554c;min-height:54px;}
+.deco-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px auto 4px;max-width:760px;}
+.deco-btn{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:7px 14px;font-size:13px;color:var(--ink-soft);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;}
+.deco-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.deco-layer{position:absolute;left:0;right:0;bottom:5%;height:30%;z-index:1;pointer-events:none;}
+.deco-item{position:absolute;bottom:0;filter:drop-shadow(0 4px 4px rgba(120,80,40,.18));}
+@keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.deco-item{animation:pop .35s ease;}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.deco-item.float{animation:floaty 3.5s ease-in-out infinite;}
 @media(max-width:760px){.home-scene{flex-direction:column;align-items:center;}.fridge-wrap,.board-wrap{width:min(360px,94vw);}}
+/* 启动加载动画 */
+.splash{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,#fff6ec,#fdeede 50%,#f1e2cf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .5s;}
+.splash.hide{opacity:0;pointer-events:none;}
+.splash-pets{display:flex;gap:22px;align-items:flex-end;}
+.splash .pet{width:96px;}
+.splash .pet.one{animation:breathe 2.6s ease-in-out infinite;}
+.splash .pet.two{animation:sway 3s ease-in-out infinite;}
+.splash-txt{font-family:var(--serif);font-size:30px;color:#b06a47;letter-spacing:3px;}
+.splash-sub{font-size:13px;color:#9a6b4a;opacity:.8;}
 </style>
 </head>
 <body>
+<div id="splash" class="splash">
+  <div class="splash-pets">
+    <div class="pet one"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#f0a868"/><path d="M92 34l-9-22-17 13z" fill="#f0a868"/><circle cx="60" cy="62" r="43" fill="#f0a868"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="pet two"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#fbf4e8"/><path d="M92 34l-9-22-17 13z" fill="#fbf4e8"/><circle cx="60" cy="62" r="43" fill="#fbf4e8"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+  </div>
+  <div class="splash-txt">一二布布</div>
+  <div class="splash-sub">正在布置小屋…</div>
+</div>
 <div class="app">
   <!-- 侧边栏 -->
   <aside class="side">
@@ -613,13 +648,13 @@ function renderAcct(){const el=$('#acctChip');if(!el)return;const on=SYNC.provid
 const SHARE_KEY='wb_life_share';
 let SHARE=loadShare();
 let TEAM_TAB='todo';
-function loadShare(){try{return JSON.parse(localStorage.getItem(SHARE_KEY))||{todos:[],ledger:[],album:[]};}catch(e){return{todos:[],ledger:[],album:[]};}}
+function loadShare(){try{const s=JSON.parse(localStorage.getItem(SHARE_KEY));return (s&&typeof s==='object')?s:{todos:[],ledger:[],album:[],home:{}};}catch(e){return{todos:[],ledger:[],album:[],home:{}};}}
 function saveShareLocal(){try{localStorage.setItem(SHARE_KEY,JSON.stringify(SHARE));}catch(e){}}
 function saveShareNow(){saveShareLocal();if(SYNC.token)scheduleSharePush();}
 let SHARE_PUSH_T=null;
 function scheduleSharePush(){clearTimeout(SHARE_PUSH_T);SHARE_PUSH_T=setTimeout(pushShareNow,1200);}
 async function pushShareNow(){if(!SYNC.token)return;try{const r=await api('/api/share',{method:'PUT',body:JSON.stringify({data:SHARE,baseUpdatedAt:SYNC.shareRev||0})});if(r.ok){const j=await r.json();SYNC.shareRev=j.updatedAt;}else if(r.status===409){const j=await r.json().catch(()=>({}));SYNC.shareRev=j.serverUpdatedAt;SHARE=j.serverData||SHARE;saveShareLocal();toast('公共空间与云端冲突，已采用云端版本');renderSec();}}catch(e){}}
-async function pullShare(){if(!SYNC.token)return;try{const r=await api('/api/share');if(!r.ok)return;const j=await r.json();SYNC.shareRev=j.updatedAt;SHARE=j.data||{todos:[],ledger:[],album:[]};saveShareLocal();if(curSec==='team')renderSec();}catch(e){}}
+async function pullShare(){if(!SYNC.token)return;try{const r=await api('/api/share');if(!r.ok)return;const j=await r.json();SYNC.shareRev=j.updatedAt;SHARE=j.data||{todos:[],ledger:[],album:[],home:{}};saveShareLocal();if(curSec==='team')renderSec(); if(curSec==='home'){refreshHomeFromSource();renderSec();}}catch(e){}}
 function syncShareStart(){syncShareStop();SYNC.shareTimer=setInterval(pullShare,12000);}
 function syncShareStop(){if(SYNC.shareTimer){clearInterval(SYNC.shareTimer);SYNC.shareTimer=null;}}
 async function teamLoad(){if(!SYNC.token)return;try{const r=await api('/api/me');if(!r.ok)return;const j=await r.json();SYNC.inviteCode=j.inviteCode;SYNC.members=j.members;SYNC.isCreator=j.isCreator;await pullShare();renderAcct();if(curSec==='team')renderSec();}catch(e){}}
@@ -1271,13 +1306,16 @@ function corruptUI(){
     <div class="acts"><button class="btn ghost" onclick="$('#fileInput').click();closeModal()">导入备份</button><button class="btn primary" id="corruptReset">重置清空</button></div>`);
   $('#corruptReset').onclick=()=>{DB=defaultDB();DB._demo=false;save();closeModal();renderAll();toast('已重置');};
 }
+function hideSplash(){const s=document.getElementById('splash');if(s){setTimeout(()=>{s.classList.add('hide');setTimeout(()=>s.remove(),560);},420);}}
 function boot(){
   initTheme();bind();
   const ok=load();
   if(!ok){CORRUPT=true;}
+  refreshHomeFromSource();
   // 日期显示
   const d=new Date();$('#todayDate').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
   renderAll();
+  hideSplash();
   // 恢复已有登录态：连接过云同步则拉取云端数据并启动轮询
   if(SYNC.provider==='gist'?SYNC.gistId:SYNC.token){
     if(SYNC.provider==='gist'){syncStart();syncPull();}
@@ -1363,27 +1401,39 @@ const ICONS={
   '海鲜':'<svg class="ico" viewBox="0 0 48 48"><path d="M6 24c9-11 23-11 29 0-6 11-20 11-29 0z" fill="#7fb0d0"/><path d="M41 24l6-7v14z" fill="#7fb0d0"/><circle cx="17" cy="22" r="2.4" fill="#2c2823"/></svg>',
   '饮料':'<svg class="ico" viewBox="0 0 48 48"><path d="M14 13h20l-3 29H17z" fill="#cdb6e0"/><rect x="11" y="9" width="26" height="5" rx="2.5" fill="#a98fd0"/><path d="M34 17l5-4" stroke="#a98fd0" stroke-width="2.2" stroke-linecap="round"/></svg>'
 };
-const FRIDGE_KEY='wb_life_fridge', MENU_KEY='wb_life_menu';
+const FRIDGE_KEY='wb_life_fridge', MENU_KEY='wb_life_menu', DECOR_KEY='wb_life_decor';
 function defaultFridge(){return {cold:{水果:[],青菜:[],肉类:[],海鲜:[]},freeze:{水果:[],青菜:[],肉类:[],海鲜:[]}};}
-let FRIDGE=loadFridge(), MENU=loadMenu();
-function loadFridge(){try{return JSON.parse(localStorage.getItem(FRIDGE_KEY))||defaultFridge();}catch(e){return defaultFridge();}}
-function loadMenu(){try{return JSON.parse(localStorage.getItem(MENU_KEY))||{menu:'',ing:''};}catch(e){return{menu:'',ing:''};}}
-function saveFridge(){try{localStorage.setItem(FRIDGE_KEY,JSON.stringify(FRIDGE));}catch(e){toast('保存失败：存储空间可能已满','err');}}
-function saveMenu(){try{localStorage.setItem(MENU_KEY,JSON.stringify(MENU));}catch(e){}}
+let FRIDGE=defaultFridge(), MENU={menu:'',ing:''}, DECOR=new Set(), openCat=null;
+// 登录自建服务器时，小屋与团队空间一起共享；否则用本机存储
+function refreshHomeFromSource(){
+  if(SYNC.token && SHARE){
+    const h=(SHARE.home)||{};
+    FRIDGE=(h.fridge&&h.fridge.cold)?h.fridge:defaultFridge();
+    MENU=h.menu||{menu:'',ing:''};
+    DECOR=new Set(h.decor||[]);
+  }else{
+    try{FRIDGE=JSON.parse(localStorage.getItem(FRIDGE_KEY))||defaultFridge();}catch(e){FRIDGE=defaultFridge();}
+    try{MENU=JSON.parse(localStorage.getItem(MENU_KEY))||{menu:'',ing:''};}catch(e){MENU={menu:'',ing:''};}
+    try{DECOR=new Set(JSON.parse(localStorage.getItem(DECOR_KEY))||[]);}catch(e){DECOR=new Set();}
+  }
+}
+function saveFridge(){ if(SYNC.token&&SHARE){SHARE.home=SHARE.home||{};SHARE.home.fridge=FRIDGE;saveShareNow();} else {try{localStorage.setItem(FRIDGE_KEY,JSON.stringify(FRIDGE));}catch(e){toast('保存失败：存储可能已满','err');}} }
+function saveMenu(){ if(SYNC.token&&SHARE){SHARE.home=SHARE.home||{};SHARE.home.menu=MENU;saveShareNow();} else {try{localStorage.setItem(MENU_KEY,JSON.stringify(MENU));}catch(e){}} }
+function saveDecor(){ const a=[...DECOR]; if(SYNC.token&&SHARE){SHARE.home=SHARE.home||{};SHARE.home.decor=a;saveShareNow();} else {try{localStorage.setItem(DECOR_KEY,JSON.stringify(a));}catch(e){}} }
 function petOne(){return '<div class="pet one"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#f0a868"/><path d="M92 34l-9-22-17 13z" fill="#f0a868"/><circle cx="60" cy="62" r="43" fill="#f0a868"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>';}
 function petTwo(){return '<div class="pet two"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#fbf4e8"/><path d="M92 34l-9-22-17 13z" fill="#fbf4e8"/><circle cx="60" cy="62" r="43" fill="#fbf4e8"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>';}
 function toggleFridge(){$('#fridge').classList.toggle('open');}
 function renderHome(c){
-  const zone=(zk,label)=>`<div class="zone ${zk}"><div class="zone-title">${zk==='cold'?'❄':'🧊'} <b>${label}</b></div><div class="shelves">${CATS.map(cat=>shelfHTML(zk,cat)).join('')}</div></div>`;
-  c.innerHTML=`<div class="home">
+  c.innerHTML=`<div class="home room">
+    <div class="deco-layer">${decoLayerHTML()}</div>
     <div class="pets">${petOne()}${petTwo()}</div>
-    <div class="home-greet">欢迎回家 · 一二和布布的小屋</div>
+    <div class="home-greet">一二和布布的小屋</div>
     <div class="home-scene">
       <div class="fridge-wrap">
-        <div class="fridge" id="fridge" onclick="toggleFridge()">
+        <div class="fridge" id="fridge">
           <div class="fridge-top">一二布布 · 冰箱</div>
-          <div class="fridge-inside">${zone('cold','冷藏区')}${zone('freeze','冷冻区')}</div>
-          <div class="fridge-doors"><div class="door left"><div class="handle"></div></div><div class="door right"><div class="handle"></div></div></div>
+          <div class="fridge-inside" id="fridgeInside">${renderFridgeInside()}</div>
+          <div class="fridge-doors" onclick="toggleFridge();event.stopPropagation()"><div class="door left"><div class="handle"></div></div><div class="door right"><div class="handle"></div></div></div>
           <div class="fridge-hint">👆 点击打开冰箱</div>
         </div>
       </div>
@@ -1397,15 +1447,23 @@ function renderHome(c){
         </div>
       </div>
     </div>
+    <div class="deco-bar">${decoBarHTML()}</div>
   </div>`;
 }
-function shelfHTML(zk,cat){
-  const arr=FRIDGE[zk][cat];
-  const items=arr.map(it=>itemHTML(zk,cat,it)).join('');
-  return `<div class="shelf"><div class="shelf-cat">${cat}</div>${items}<button class="shelf-add" onclick="addItemPrompt('${zk}','${cat}')">＋ 添加</button></div>`;
+function renderFridgeInside(){ return zoneHTML('cold','冷藏区','❄')+zoneHTML('freeze','冷冻区','🧊'); }
+function zoneHTML(zk,label,ic){
+  const cats=CATS.map(cat=>{
+    const arr=FRIDGE[zk][cat];
+    const active=openCat===zk+':'+cat;
+    const panel=active?`<div class="cat-panel">${arr.map(it=>itemHTML(zk,cat,it)).join('')}<button class="shelf-add" onclick="addItemPrompt('${zk}','${cat}')">＋ 添加${cat}</button></div>`:'';
+    return `<div class="cat-card ${active?'open':''}" onclick="toggleCat('${zk}','${cat}')"><span class="cat-ic">${ICONS[cat]||''}</span><span class="cat-name">${cat}</span><span class="cat-count">${arr.length}</span></div>${panel}`;
+  }).join('');
+  return `<div class="zone ${zk}"><div class="zone-title">${ic} <b>${label}</b></div><div class="cats">${cats}</div></div>`;
 }
+function toggleCat(zk,cat){ openCat=(openCat===zk+':'+cat)?null:(zk+':'+cat); const el=$('#fridgeInside'); if(el)el.innerHTML=renderFridgeInside(); }
+function refreshFridge(){ const el=$('#fridgeInside'); if(el)el.innerHTML=renderFridgeInside(); }
 function itemHTML(zk,cat,it){
-  return `<div class="item" style="position:relative">${ICONS[it.icon]||ICONS['水果']}
+  return `<div class="item">${ICONS[it.icon]||ICONS['水果']}
     <div class="nm">${esc(it.name)}</div>
     <div class="qty"><button onclick="chgQty('${zk}','${cat}','${it.id}',-1)">−</button><span>${it.qty}</span><button onclick="chgQty('${zk}','${cat}','${it.id}',1)">＋</button></div>
     <button class="item-del" onclick="delItem('${zk}','${cat}','${it.id}')">×</button></div>`;
@@ -1426,16 +1484,32 @@ function addItem(zk,cat){
   const qty=Math.max(1,parseInt($('#ai_qty').value)||1);
   const icon=$('#ai_icon').value;
   FRIDGE[zk][cat].push({id:uid(),name,qty,icon});
-  saveFridge();closeModal();renderHome($('#content'));
+  saveFridge();closeModal();refreshFridge();
 }
 function chgQty(zk,cat,id,d){
   const it=FRIDGE[zk][cat].find(x=>x.id===id); if(!it)return;
   it.qty=Math.max(0,it.qty+d);
   if(it.qty<=0){delItem(zk,cat,id);return;}
-  saveFridge();renderHome($('#content'));
+  saveFridge();refreshFridge();
 }
-function delItem(zk,cat,id){FRIDGE[zk][cat]=FRIDGE[zk][cat].filter(x=>x.id!==id);saveFridge();renderHome($('#content'));}
+function delItem(zk,cat,id){FRIDGE[zk][cat]=FRIDGE[zk][cat].filter(x=>x.id!==id);saveFridge();refreshFridge();}
 function menuChange(k,v){MENU[k]=v;saveMenu();}
+function decoBarHTML(){
+  const items=[['桌子','🪑'],['椅子','💺'],['花','🌷'],['地毯','🟫'],['台灯','💡']];
+  return items.map(([n,ic])=>`<button class="deco-btn ${DECOR.has(n)?'on':''}" onclick="toggleDeco('${n}')">${ic} ${n}</button>`).join('');
+}
+function toggleDeco(n){ if(DECOR.has(n))DECOR.delete(n); else DECOR.add(n); saveDecor(); renderHome($('#content')); }
+function decoLayerHTML(){
+  const pos={'桌子':'left:5%','椅子':'right:7%','花':'left:42%','地毯':'left:16%','台灯':'right:28%'};
+  const svg={'桌子':decoTable(),'椅子':decoChair(),'花':decoPlant(),'地毯':decoRug(),'台灯':decoLamp()};
+  let h=''; DECOR.forEach(n=>{ h+=`<div class="deco-item ${n==='花'||n==='台灯'?'float':''}" style="${pos[n]||''}">${svg[n]||''}</div>`; });
+  return h;
+}
+function decoTable(){return '<svg width="70" height="50" viewBox="0 0 70 50"><rect x="6" y="20" width="58" height="8" rx="4" fill="#c79a6b"/><rect x="11" y="28" width="6" height="20" fill="#a87f52"/><rect x="53" y="28" width="6" height="20" fill="#a87f52"/></svg>';}
+function decoChair(){return '<svg width="42" height="58" viewBox="0 0 42 58"><rect x="8" y="10" width="26" height="24" rx="4" fill="#b98a5a"/><rect x="10" y="32" width="6" height="24" fill="#9a6f44"/><rect x="26" y="32" width="6" height="24" fill="#9a6f44"/></svg>';}
+function decoPlant(){return '<svg width="42" height="58" viewBox="0 0 42 58"><path d="M21 42c-9-7-9-20 0-27 9 7 9 20 0 27z" fill="#6fae5a"/><rect x="14" y="42" width="14" height="13" rx="2" fill="#c98b6c"/></svg>';}
+function decoRug(){return '<svg width="96" height="30" viewBox="0 0 96 30"><ellipse cx="48" cy="15" rx="45" ry="12" fill="#d98b6c" opacity=".85"/><ellipse cx="48" cy="15" rx="32" ry="8" fill="#f0c0a0" opacity=".7"/></svg>';}
+function decoLamp(){return '<svg width="34" height="58" viewBox="0 0 34 58"><path d="M9 6h16l5 15H4z" fill="#f0c674"/><rect x="15" y="21" width="4" height="29" fill="#9a6f44"/><rect x="8" y="50" width="18" height="6" rx="2" fill="#9a6f44"/></svg>';}
 
 boot();
 </script>
