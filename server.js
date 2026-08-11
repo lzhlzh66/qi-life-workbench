@@ -199,7 +199,7 @@ const server = http.createServer(async (req, res) => {
   const p = url.pathname;
   if (p === '/.well-known/assetlinks.json') {
     const fp = process.env.ASSETLINKS_FP || '55:06:DF:4D:7E:AC:01:A7:08:ED:B4:DE:DF:7A:A0:12:03:B1:37:A5:B1:5C:4C:CB:22:44:95:C1:49:03:86:20';
-    const pkg = process.env.ASSETLINKS_PKG || 'com.lzhlzh66.qilife';
+    const pkg = process.env.ASSETLINKS_PKG || 'com.onrender.qi_life_workbench.twa';
     const al = [{ relation: ['delegate_permission/common.handle_all_urls'], target: { namespace: 'android_app', package_name: pkg, sha256_cert_fingerprints: [fp] } }];
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify(al, null, 2));
