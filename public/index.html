@@ -257,6 +257,16 @@ tr:last-child td{border-bottom:none;}
 .home{position:relative;background:linear-gradient(160deg,#fdf3e6,#f3e2cd);border-radius:var(--radius);padding:18px;min-height:64vh;overflow:hidden;touch-action:manipulation;}
 .home.room:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#fdf6ea 0%,#f6e7d2 60%,#ecd6ba 60%,#dccaa6 100%);z-index:0;}
 .home.room:after{content:"";position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(#ead2b6,#d2b48f);transform:perspective(520px) rotateX(34deg);transform-origin:bottom center;box-shadow:inset 0 3px 0 rgba(255,255,255,.35);z-index:0;}
+.home.room .theme-deco{position:absolute;top:6%;left:0;right:0;height:32%;z-index:0;pointer-events:none;}
+/* 屋子系统 · 双主题可切换 */
+.home.room[data-theme=ghibli]:before{background:linear-gradient(180deg,#bfe6ea 0%,#dcefe0 52%,#bfe3c0 52%,#9ed1a0 100%);}
+.home.room[data-theme=ghibli]:after{background:linear-gradient(#bfe0b0,#9ecb8e);transform:perspective(520px) rotateX(34deg);transform-origin:bottom center;box-shadow:inset 0 3px 0 rgba(255,255,255,.4);}
+.home.room[data-theme=ghibli] .theme-deco{background:radial-gradient(circle at 16% 42%,#fff 0 13px,transparent 14px),radial-gradient(circle at 20% 48%,#fff 0 9px,transparent 10px),radial-gradient(circle at 80% 30%,#fff 0 12px,transparent 13px),radial-gradient(circle at 84% 36%,#fff 0 8px,transparent 9px);opacity:.9;}
+.home.room[data-theme=pastoral]:before{background:linear-gradient(180deg,#fdf3d6 0%,#f6e2bd 52%,#ecd099 52%,#d6b46d 100%);}
+.home.room[data-theme=pastoral]:after{background:linear-gradient(#e7cf95,#cdae6a);transform:perspective(520px) rotateX(34deg);transform-origin:bottom center;box-shadow:inset 0 3px 0 rgba(255,255,255,.4);}
+.home.room[data-theme=pastoral] .theme-deco{background:radial-gradient(circle at 84% 20%,#ffd56a 0 15px,#ffe9a3 16px 21px,transparent 22px);opacity:.95;}
+.theme-toggle{border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.55);border-radius:20px;padding:4px 12px;font-size:12px;color:#7a5a3a;cursor:pointer;font-family:inherit;margin-left:8px;vertical-align:middle;}
+.theme-toggle:active{background:rgba(255,255,255,.85);}
 .home > *{position:relative;z-index:1;}
 .pets{position:relative;width:100%;height:118px;display:flex;justify-content:center;gap:24px;align-items:flex-end;margin-bottom:2px;}
 .pet{width:98px;transform-origin:bottom center;}
@@ -333,8 +343,8 @@ tr:last-child td{border-bottom:none;}
 <body>
 <div id="splash" class="splash">
   <div class="splash-pets">
-    <div class="pet one"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#f0a868"/><path d="M92 34l-9-22-17 13z" fill="#f0a868"/><circle cx="60" cy="62" r="43" fill="#f0a868"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
-    <div class="pet two"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#fbf4e8"/><path d="M92 34l-9-22-17 13z" fill="#fbf4e8"/><circle cx="60" cy="62" r="43" fill="#fbf4e8"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="pet one"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="34" ry="6" fill="rgba(120,80,40,.12)"/><circle cx="34" cy="34" r="15" fill="#fbfaf6" stroke="#e6dfd0" stroke-width="2"/><circle cx="86" cy="34" r="15" fill="#fbfaf6" stroke="#e6dfd0" stroke-width="2"/><circle cx="34" cy="34" r="7" fill="#f3c9c0"/><circle cx="86" cy="34" r="7" fill="#f3c9c0"/><circle cx="60" cy="64" r="42" fill="#fbfaf6" stroke="#e6dfd0" stroke-width="2"/><circle class="eye" cx="46" cy="60" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="60" r="5" fill="#2c2823"/><ellipse cx="60" cy="74" rx="7" ry="5" fill="#5b4636"/><path d="M60 79v4 M53 83q7 6 14 0" stroke="#2c2823" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="40" cy="74" r="6" fill="#f6c0b8" opacity=".6"/><circle cx="80" cy="74" r="6" fill="#f6c0b8" opacity=".6"/></svg></div>
+    <div class="pet two"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="34" ry="6" fill="rgba(120,80,40,.12)"/><circle cx="34" cy="34" r="15" fill="#c79366" stroke="#a9743f" stroke-width="2"/><circle cx="86" cy="34" r="15" fill="#c79366" stroke="#a9743f" stroke-width="2"/><circle cx="34" cy="34" r="7" fill="#8a5a32"/><circle cx="86" cy="34" r="7" fill="#8a5a32"/><circle cx="60" cy="64" r="42" fill="#c79366" stroke="#a9743f" stroke-width="2"/><circle class="eye" cx="46" cy="60" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="60" r="5" fill="#2c2823"/><ellipse cx="60" cy="74" rx="7" ry="5" fill="#5b4636"/><path d="M60 79v4 M53 83q7 6 14 0" stroke="#2c2823" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="40" cy="74" r="6" fill="#e89a8a" opacity=".5"/><circle cx="80" cy="74" r="6" fill="#e89a8a" opacity=".5"/></svg></div>
   </div>
   <div class="splash-txt">一二布布</div>
   <div class="splash-sub">正在布置小屋…</div>
@@ -1297,7 +1307,7 @@ function bind(){
   $('#btnBackup').onclick=exportJSON;$('#topBackup').onclick=exportJSON;
   $('#btnImport').onclick=()=>$('#fileInput').click();$('#topImport').onclick=()=>$('#fileInput').click();
   $('#btnClearDemo').onclick=clearDemo;
-  const toggleTheme=()=>{const cur=document.documentElement.getAttribute('data-theme');const nx=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',nx);try{localStorage.setItem(KEY_THEME,nx);}catch(e){}};
+  function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const nx=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',nx);try{localStorage.setItem(KEY_THEME,nx);}catch(e){}}
   $('#btnTheme').onclick=toggleTheme;$('#topTheme').onclick=toggleTheme;
   $('#fileInput').addEventListener('change',e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value='';});
 }
@@ -1308,25 +1318,28 @@ function corruptUI(){
 }
 function hideSplash(){const s=document.getElementById('splash');if(s){setTimeout(()=>{s.classList.add('hide');setTimeout(()=>s.remove(),560);},420);}}
 function boot(){
-  initTheme();bind();
-  const ok=load();
-  if(!ok){CORRUPT=true;}
-  refreshHomeFromSource();
-  // 日期显示
-  const d=new Date();$('#todayDate').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
-  renderAll();
-  hideSplash();
-  // 恢复已有登录态：连接过云同步则拉取云端数据并启动轮询
-  if(SYNC.provider==='gist'?SYNC.gistId:SYNC.token){
-    if(SYNC.provider==='gist'){syncStart();syncPull();}
-    else{
-      fetch(syncBase()+'/api/data',{headers:{'Authorization':'Bearer '+SYNC.token}})
-        .then(r=>{if(r.ok){afterLogin();}else{SYNC.token='';localStorage.removeItem('wb_life_token');renderAcct();renderSyncBox();}})
-        .catch(()=>{});
+  try{
+    initTheme();bind();
+    const ok=load();
+    if(!ok){CORRUPT=true;}
+    refreshHomeFromSource();
+    const d=new Date();$('#todayDate').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+    renderAll();
+  }catch(e){console.error('启动初始化异常：',e);}
+  finally{hideSplash();}
+  try{
+    // 恢复已有登录态：连接过云同步则拉取云端数据并启动轮询
+    if(SYNC.provider==='gist'?SYNC.gistId:SYNC.token){
+      if(SYNC.provider==='gist'){syncStart();syncPull();}
+      else{
+        fetch(syncBase()+'/api/data',{headers:{'Authorization':'Bearer '+SYNC.token}})
+          .then(r=>{if(r.ok){afterLogin();}else{SYNC.token='';localStorage.removeItem('wb_life_token');renderAcct();renderSyncBox();}})
+          .catch(()=>{});
+      }
     }
-  }
-  renderAcct();renderSyncBox();
-  if(CORRUPT)setTimeout(corruptUI,300);
+    renderAcct();renderSyncBox();
+    if(CORRUPT)setTimeout(corruptUI,300);
+  }catch(e){console.error('登录恢复异常：',e);}
 }
 // 暴露给内联 onclick
 Object.assign(window,{exportJSON,importJSON,clearDemo,resetAll,switchSec,renderLedger,renderHabits,renderFitness,renderSchedule,renderShopping,renderMedia,
@@ -1404,6 +1417,7 @@ const ICONS={
 const FRIDGE_KEY='wb_life_fridge', MENU_KEY='wb_life_menu', DECOR_KEY='wb_life_decor';
 function defaultFridge(){return {cold:{水果:[],青菜:[],肉类:[],海鲜:[]},freeze:{水果:[],青菜:[],肉类:[],海鲜:[]}};}
 let FRIDGE=defaultFridge(), MENU={menu:'',ing:''}, DECOR=new Set(), openCat=null;
+let HOME_THEME=localStorage.getItem('wb_home_theme')||'ghibli';
 // 登录自建服务器时，小屋与团队空间一起共享；否则用本机存储
 function refreshHomeFromSource(){
   if(SYNC.token && SHARE){
@@ -1420,14 +1434,15 @@ function refreshHomeFromSource(){
 function saveFridge(){ if(SYNC.token&&SHARE){SHARE.home=SHARE.home||{};SHARE.home.fridge=FRIDGE;saveShareNow();} else {try{localStorage.setItem(FRIDGE_KEY,JSON.stringify(FRIDGE));}catch(e){toast('保存失败：存储可能已满','err');}} }
 function saveMenu(){ if(SYNC.token&&SHARE){SHARE.home=SHARE.home||{};SHARE.home.menu=MENU;saveShareNow();} else {try{localStorage.setItem(MENU_KEY,JSON.stringify(MENU));}catch(e){}} }
 function saveDecor(){ const a=[...DECOR]; if(SYNC.token&&SHARE){SHARE.home=SHARE.home||{};SHARE.home.decor=a;saveShareNow();} else {try{localStorage.setItem(DECOR_KEY,JSON.stringify(a));}catch(e){}} }
-function petOne(){return '<div class="pet one"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#f0a868"/><path d="M92 34l-9-22-17 13z" fill="#f0a868"/><circle cx="60" cy="62" r="43" fill="#f0a868"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0a0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>';}
-function petTwo(){return '<div class="pet two"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="110" rx="34" ry="7" fill="rgba(120,80,40,.12)"/><path d="M28 34l9-22 17 13z" fill="#fbf4e8"/><path d="M92 34l-9-22-17 13z" fill="#fbf4e8"/><circle cx="60" cy="62" r="43" fill="#fbf4e8"/><circle class="eye" cx="46" cy="58" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="58" r="5" fill="#2c2823"/><circle cx="42" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><circle cx="78" cy="70" r="6" fill="#f6c0c0" opacity=".7"/><path d="M53 68q7 6 14 0" stroke="#2c2823" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>';}
+function petOne(){return '<div class="pet one"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="34" ry="6" fill="rgba(120,80,40,.12)"/><circle cx="34" cy="34" r="15" fill="#fbfaf6" stroke="#e6dfd0" stroke-width="2"/><circle cx="86" cy="34" r="15" fill="#fbfaf6" stroke="#e6dfd0" stroke-width="2"/><circle cx="34" cy="34" r="7" fill="#f3c9c0"/><circle cx="86" cy="34" r="7" fill="#f3c9c0"/><circle cx="60" cy="64" r="42" fill="#fbfaf6" stroke="#e6dfd0" stroke-width="2"/><circle class="eye" cx="46" cy="60" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="60" r="5" fill="#2c2823"/><ellipse cx="60" cy="74" rx="7" ry="5" fill="#5b4636"/><path d="M60 79v4 M53 83q7 6 14 0" stroke="#2c2823" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="40" cy="74" r="6" fill="#f6c0b8" opacity=".6"/><circle cx="80" cy="74" r="6" fill="#f6c0b8" opacity=".6"/></svg></div>';}
+function petTwo(){return '<div class="pet two"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="34" ry="6" fill="rgba(120,80,40,.12)"/><circle cx="34" cy="34" r="15" fill="#c79366" stroke="#a9743f" stroke-width="2"/><circle cx="86" cy="34" r="15" fill="#c79366" stroke="#a9743f" stroke-width="2"/><circle cx="34" cy="34" r="7" fill="#8a5a32"/><circle cx="86" cy="34" r="7" fill="#8a5a32"/><circle cx="60" cy="64" r="42" fill="#c79366" stroke="#a9743f" stroke-width="2"/><circle class="eye" cx="46" cy="60" r="5" fill="#2c2823"/><circle class="eye" cx="74" cy="60" r="5" fill="#2c2823"/><ellipse cx="60" cy="74" rx="7" ry="5" fill="#5b4636"/><path d="M60 79v4 M53 83q7 6 14 0" stroke="#2c2823" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="40" cy="74" r="6" fill="#e89a8a" opacity=".5"/><circle cx="80" cy="74" r="6" fill="#e89a8a" opacity=".5"/></svg></div>';}
 function toggleFridge(){$('#fridge').classList.toggle('open');}
 function renderHome(c){
-  c.innerHTML=`<div class="home room">
+  c.innerHTML=`<div class="home room" data-theme="${HOME_THEME}">
+    <div class="theme-deco"></div>
     <div class="deco-layer">${decoLayerHTML()}</div>
     <div class="pets">${petOne()}${petTwo()}</div>
-    <div class="home-greet">一二和布布的小屋</div>
+    <div class="home-greet">一二和布布的小屋 <button class="theme-toggle" onclick="toggleHomeTheme()">🎨 ${HOME_THEME==='ghibli'?'宫崎骏风':'田园风'}</button></div>
     <div class="home-scene">
       <div class="fridge-wrap">
         <div class="fridge" id="fridge">
@@ -1499,6 +1514,7 @@ function decoBarHTML(){
   return items.map(([n,ic])=>`<button class="deco-btn ${DECOR.has(n)?'on':''}" onclick="toggleDeco('${n}')">${ic} ${n}</button>`).join('');
 }
 function toggleDeco(n){ if(DECOR.has(n))DECOR.delete(n); else DECOR.add(n); saveDecor(); renderHome($('#content')); }
+function toggleHomeTheme(){HOME_THEME=HOME_THEME==='ghibli'?'pastoral':'ghibli';try{localStorage.setItem('wb_home_theme',HOME_THEME);}catch(e){}renderHome($('#content'));}
 function decoLayerHTML(){
   const pos={'桌子':'left:5%','椅子':'right:7%','花':'left:42%','地毯':'left:16%','台灯':'right:28%'};
   const svg={'桌子':decoTable(),'椅子':decoChair(),'花':decoPlant(),'地毯':decoRug(),'台灯':decoLamp()};
