@@ -1,5 +1,5 @@
 /* 一二布布工作台 PWA Service Worker */
-const VERSION = 'life-pwa-v2';
+const VERSION = 'life-pwa-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', e => {
