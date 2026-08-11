@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.lzhlzh66.qilife",
+    "sha256_cert_fingerprints": ["55:06:DF:4D:7E:AC:01:A7:08:ED:B4:DE:DF:7A:A0:12:03:B1:37:A5:B1:5C:4C:CB:22:44:95:C1:49:03:86:20"]
+  }
+}]
