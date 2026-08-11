@@ -1,5 +1,5 @@
 /* 一二布布工作台 PWA Service Worker */
-const VERSION = 'life-pwa-v3';
+const VERSION = 'life-pwa-v4';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', e => {
@@ -21,7 +21,7 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // 导航请求：网络优先，失败回退缓存
+  // 导航请求：网络优先；失败不回退可能过期的首页缓存（避免旧版卡死），改返回可刷新的提示页
   if (req.mode === 'navigate') {
     e.respondWith((async () => {
       try {
@@ -30,7 +30,16 @@ self.addEventListener('fetch', e => {
         cache.put('./index.html', net.clone());
         return net;
       } catch {
-        return (await caches.match('./index.html')) || (await caches.match(req)) || Response.error();
+        return new Response(
+          '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+          '<title>一二布布</title>' +
+          '<style>body{font-family:sans-serif;background:#fff6ec;color:#b06a47;min-height:100vh;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}' +
+          'button{font-size:16px;padding:12px 26px;border:0;border-radius:10px;background:#b06a47;color:#fff;cursor:pointer}</style>' +
+          '<div style="font-size:30px;letter-spacing:3px">一二布布</div>' +
+          '<p>正在连接服务器，请稍候…</p>' +
+          '<button onclick="location.reload()">点击刷新</button>',
+          { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+        );
       }
     })());
     return;
