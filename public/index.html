@@ -283,6 +283,8 @@ tr:last-child td{border-bottom:none;}
 .fridge{position:relative;width:100%;height:430px;border-radius:22px;background:linear-gradient(160deg,#eef3f1,#dfe8e4);box-shadow:0 14px 30px rgba(90,110,100,.22),inset 0 2px 6px rgba(255,255,255,.6);overflow:hidden;border:2px solid #cfdcd6;perspective:1300px;touch-action:manipulation;}
 .fridge-top{position:absolute;top:0;left:0;right:0;height:34px;background:linear-gradient(#d6e2dd,#c8d6d0);display:flex;align-items:center;justify-content:center;font-size:12px;color:#5f7a6e;letter-spacing:1px;z-index:5;border-bottom:1px solid #c0cfc8;}
 .fridge-doors{position:absolute;inset:34px 0 0 0;display:flex;z-index:4;cursor:pointer;}
+.fridge.open .fridge-doors{pointer-events:none;}
+.fridge-close{position:sticky;top:0;align-self:flex-end;margin:0 0 6px auto;background:#cfe3d8;color:#3f6151;border:none;border-radius:14px;padding:6px 12px;font-size:13px;cursor:pointer;z-index:3;}
 .door{flex:1;background:linear-gradient(155deg,#f4f8f6,#dde8e3);border:1px solid #cdd9d3;position:relative;transition:transform .75s cubic-bezier(.6,.05,.3,1);transform-origin:left center;backface-visibility:hidden;}
 .door.right{transform-origin:right center;border-left:none;}
 .door .handle{position:absolute;top:46%;width:9px;height:56px;background:#b9c7c0;border-radius:5px;}
@@ -1474,7 +1476,7 @@ function renderHome(c){
     <div class="deco-bar">${decoBarHTML()}</div>
   </div>`;
 }
-function renderFridgeInside(){ return zoneHTML('cold','冷藏区','❄')+zoneHTML('freeze','冷冻区','🧊'); }
+function renderFridgeInside(){ return '<button class="fridge-close" onclick="toggleFridge()">✕ 关闭冰箱</button>'+zoneHTML('cold','冷藏区','❄')+zoneHTML('freeze','冷冻区','🧊'); }
 function zoneHTML(zk,label,ic){
   const cats=CATS.map(cat=>{
     const arr=FRIDGE[zk][cat];
