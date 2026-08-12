@@ -11,6 +11,25 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="一二布布">
 <link rel="apple-touch-icon" href="./icon.svg">
+<script>
+/* 早期启动守卫：在主脚本之前注册。若 4.5s 内主程序未完成启动，弹出可点击的「重新加载」浮层（z-index 最高，覆盖一切，含冻结的主脚本）。即使主脚本死循环导致定时器不触发，下方 .splash 的纯 CSS 动画也会在 3s 后自动隐藏启动图，绝不无限卡死。 */
+(function(){
+  function showReload(){
+    if(document.getElementById('bootfail'))return;
+    var d=document.createElement('div');
+    d.id='bootfail';
+    d.style.cssText='position:fixed;inset:0;z-index:2147483647;background:#fff6ec;color:#b06a47;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:28px;font-family:sans-serif';
+    d.innerHTML='<div style="font-size:54px">🐻</div>'
+      +'<div style="font-size:20px;font-weight:700">页面没能正常启动</div>'
+      +'<div style="font-size:14px;opacity:.85;max-width:300px;line-height:1.7">可能是网络波动或旧缓存。点下面的按钮重新加载，通常一次就好。</div>'
+      +'<button onclick="location.reload()" style="border:none;background:#b06a47;color:#fff;font-size:17px;padding:14px 32px;border-radius:26px;cursor:pointer;box-shadow:0 6px 18px rgba(176,106,71,.35)">↻ 点击重新加载</button>';
+    (document.body||document.documentElement).appendChild(d);
+  }
+  window.__BOOT_DONE=false;
+  window.showBootReload=showReload;
+  setTimeout(function(){ if(!window.__BOOT_DONE) showReload(); }, 4500);
+})();
+</script>
 <style>
 /* ============ 设计变量 ============ */
 :root{
@@ -332,7 +351,8 @@ tr:last-child td{border-bottom:none;}
 .deco-item.float{animation:floaty 3.5s ease-in-out infinite;}
 @media(max-width:760px){.home-scene{flex-direction:column;align-items:center;}.fridge-wrap,.board-wrap{width:min(360px,94vw);}}
 /* 启动加载动画 */
-.splash{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,#fff6ec,#fdeede 50%,#f1e2cf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .5s;}
+.splash{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,#fff6ec,#fdeede 50%,#f1e2cf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .5s;animation:splashAutoHide .4s linear 3s forwards;}
+@keyframes splashAutoHide{to{opacity:0;visibility:hidden;pointer-events:none;}}
 .splash.hide{opacity:0;pointer-events:none;}
 .splash-pets{display:flex;gap:22px;align-items:flex-end;}
 .splash .pet{width:96px;}
@@ -1329,8 +1349,8 @@ function boot(){
     refreshHomeFromSource();
     const d=new Date();$('#todayDate').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
     renderAll();
-  }catch(e){console.error('启动初始化异常：',e);}
-  finally{hideSplash();}
+  }catch(e){console.error('启动初始化异常：',e);try{window.showBootReload&&window.showBootReload();}catch(_){}}
+  finally{hideSplash();window.__BOOT_DONE=true;}
   try{
     // 恢复已有登录态：连接过云同步则拉取云端数据并启动轮询
     if(SYNC.provider==='gist'?SYNC.gistId:SYNC.token){
@@ -1562,7 +1582,7 @@ boot();
       var s=document.getElementById('splash');
       if(s && !s.dataset.forced){
         s.dataset.forced='1';
-        if(window.BOOT_OK){
+        if(window.BOOT_OK||window.__BOOT_DONE){
           s.classList.add('hide');
           setTimeout(function(){ if(s&&s.parentNode){ s.parentNode.removeChild(s);} },600);
         }else{
