@@ -1319,6 +1319,8 @@ function corruptUI(){
   $('#corruptReset').onclick=()=>{DB=defaultDB();DB._demo=false;save();closeModal();renderAll();toast('已重置');};
 }
 function hideSplash(){const s=document.getElementById('splash');if(s){setTimeout(()=>{s.classList.add('hide');setTimeout(()=>s.remove(),560);},420);}}
+// 启动是否成功的标记：失败时不露白屏，而是显示可刷新的提示层
+let BOOT_OK=false;
 function boot(){
   try{
     initTheme();bind();
@@ -1342,6 +1344,7 @@ function boot(){
     renderAcct();renderSyncBox();
     if(CORRUPT)setTimeout(corruptUI,300);
   }catch(e){console.error('登录恢复异常：',e);}
+  BOOT_OK=true;
 }
 // 暴露给内联 onclick
 Object.assign(window,{exportJSON,importJSON,clearDemo,resetAll,switchSec,renderLedger,renderHabits,renderFitness,renderSchedule,renderShopping,renderMedia,
@@ -1541,15 +1544,32 @@ function decoLamp(){return '<svg width="34" height="58" viewBox="0 0 34 58"><pat
 boot();
 </script>
 <script>
-/* 启动页兜底：任何未知脚本异常或网络缓慢，最多 3.5s 强制隐藏启动页，杜绝永久卡在「正在布置小屋」 */
+/* 启动页兜底：任何未知脚本异常或网络缓慢，最多 3.5s 处理；若启动未完成则显示可「点击刷新」的提示层，绝不露纯白屏 */
 (function(){
+  function showReload(){
+    if(document.getElementById('bootfail'))return;
+    var d=document.createElement('div');
+    d.id='bootfail';
+    d.style.cssText='position:fixed;inset:0;z-index:999;background:#fff6ec;color:#b06a47;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:28px;font-family:sans-serif';
+    d.innerHTML='<div style="font-size:50px">🐻</div>'
+      +'<div style="font-size:19px;font-weight:600">页面没能完整加载</div>'
+      +'<div style="font-size:14px;opacity:.85;max-width:300px;line-height:1.7">多半是网络波动或旧缓存。点下面的按钮重新加载即可，通常一次就好。</div>'
+      +'<button onclick="location.reload()" style="border:none;background:#b06a47;color:#fff;font-size:16px;padding:13px 30px;border-radius:26px;cursor:pointer;box-shadow:0 6px 18px rgba(176,106,71,.35)">↻ 点击刷新</button>';
+    document.body.appendChild(d);
+  }
   function forceHide(){
     try{
       var s=document.getElementById('splash');
       if(s && !s.dataset.forced){
         s.dataset.forced='1';
-        s.classList.add('hide');
-        setTimeout(function(){ if(s&&s.parentNode){ s.parentNode.removeChild(s);} },600);
+        if(window.BOOT_OK){
+          s.classList.add('hide');
+          setTimeout(function(){ if(s&&s.parentNode){ s.parentNode.removeChild(s);} },600);
+        }else{
+          // 启动未完成：移除启动页并显示可刷新的提示层，避免纯白屏无入口
+          if(s.parentNode){ s.parentNode.removeChild(s); }
+          showReload();
+        }
       }
     }catch(e){}
   }
